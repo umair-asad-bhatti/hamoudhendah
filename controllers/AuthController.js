@@ -12,7 +12,7 @@ const Auth = {
             const exists = await User.findOne({ email_address: email })
 
             if (exists) {
-                return res.status(200).json({ msg: 'user already exists' })
+                return res.json({ msg: 'user already exists' })
             }
             const hashed_password = await bcrypt.hash(password, 10)
             const user = new User({ email_address: email, password: hashed_password })
@@ -23,9 +23,9 @@ const Auth = {
             //send otp to email
             const info = await sendOtpEmail(email, otp)
             console.log("Message sent: %s", info);
-            return res.status(200).json({ msg: 'OTP has been sent to your email address' })
+            return res.json({ msg: 'OTP has been sent to your email address' })
         } catch (error) {
-            return res.status(400).send({ msg: 'an error occured' })
+            return res.send({ msg: 'an error occured' })
         }
     },
     verifyOTP: async (req, res) => {
@@ -34,24 +34,24 @@ const Auth = {
             const otpDoc = await otps.findOne({ email_address: email })
             const userdoc = await User.findOne({ email_address: email })
             if (userdoc?.isVerified) {
-                return res.status(400).send({ msg: 'otp has already been verified for this email' })
+                return res.send({ msg: 'otp has already been verified for this email' })
             }
             if (!otpDoc || !userdoc) {
-                return res.status(400).send({ msg: 'Invalid otp for given email' })
+                return res.send({ msg: 'Invalid otp for given email' })
             }
             if (otp != otpDoc.otp)
-                return res.status(401).send({ msg: 'Invalid otp' })
+                return res.send({ msg: 'Invalid otp' })
             else {
                 await User.findByIdAndUpdate(userdoc.id, { isVerified: true })
-                return res.status(200).send({ msg: 'otp verification successful' })
+                return res.send({ msg: 'otp verification successful' })
             }
         } catch (error) {
             console.log(error);
-            return res.status(500).send({ msg: 'An orror occured' })
+            return res.send({ msg: 'An orror occured' })
         }
     },
     signin: async (req, res) => {
-        res.status(200).json({ msg: 'signup  here' })
+        res.json({ msg: 'signup  here' })
     }
 }
 
