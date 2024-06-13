@@ -1,13 +1,14 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
+const router = require("./router/Router")
 
-app.get("/", (req, res) => {
-    res.send({ msg: 'welcome' }).status(200)
-})
+app.use("/api/v1/", router)
+
 // Use PORT provided in environment or default to 3000
 const port = process.env.PORT || 3000;
 
 // Listen on `port` and 0.0.0.0
-app.listen(port, "0.0.0.0", function () {
-    console.log('running');
+app.listen(port, "0.0.0.0", async function () {
+    console.log('running on port');
 });
