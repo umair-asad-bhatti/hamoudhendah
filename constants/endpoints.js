@@ -3,6 +3,7 @@ const endPoints = {
     signIn: '/signin',
     signUp: '/signup',
     verifyOTP: '/otpverification',
-    dbTables: "/createTables"
+    dbTables: "/createTables",
+    regenerateOTP:'/regenerateOtp'
 }
 module.exports = endPoints

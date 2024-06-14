@@ -3,6 +3,7 @@ const sendOtpEmail = require('../utils/nodemailer');
 const User = require("../models/user")
 const otps = require("../models/otps")
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const Auth = {
     signup: async (req, res) => {
         try {
@@ -39,7 +40,7 @@ const Auth = {
             if (!otpDoc || !userdoc) {
                 return res.send({ msg: 'Invalid otp for given email' })
             }
-            if (otp != otpDoc.otp)
+            if (otp !== otpDoc.otp)
                 return res.send({ msg: 'Invalid otp' })
             else {
                 await User.findByIdAndUpdate(userdoc.id, { isVerified: true })
@@ -50,8 +51,44 @@ const Auth = {
             return res.send({ msg: 'An orror occured' })
         }
     },
+    regenerateOtp:async (req,res)=>{
+       try{
+           const {email}=req.body
+           const otpDoc = await otps.findOne({ email_address: email })
+           if (!otpDoc) {
+               return res.send({ msg: 'Cannot regenerate otp for this email' })
+           }
+           //Generate new otp
+           const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false, digits: true });
+           await otps.findOneAndUpdate({email_address: email}, { otp:otp })
+           const info = await sendOtpEmail(email, otp)
+           return res.send({msg:'New otp has been sent to your email address'})
+       }catch (e) {
+           console.log(e)
+           res.send({msg:'An error occurrred'})
+       }
+    },
     signin: async (req, res) => {
-        res.json({ msg: 'signup  here' })
+        try {
+            const {email,password}=req.body
+            const user_doc=await User.findOne({email_address:email})
+            if(!user_doc){
+                return res.send({msg:'wrong email or password'})
+            }
+            if(!user_doc.isVerified){
+                return res.send({msg:'email is not verified'})
+            }
+            const isPasswordCorrect=await bcrypt.compare(password,user_doc.password)
+            if(!isPasswordCorrect){
+                res.send({msg:'wrong email and password'})
+            }
+            const {email_address,id}=user_doc
+            const token=jwt.sign({email_address,id},process.env.JWT_SECRET)
+            return res.json({ user:{id,email_address},accesstoken:token })
+        }catch (e) {
+            console.log(e)
+            return res.send({msg:"An error occurred.Try again "})
+        }
     }
 }
 
