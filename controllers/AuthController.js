@@ -89,7 +89,7 @@ const Auth = {
         try {
             const { email, password } = req.body;
             const user_doc = await User.findOne({ email_address: email });
-
+            // if no doc
             if (!user_doc) {
                 return res.status(401).send({ msg: 'Wrong email or password' }); // 401 Unauthorized
             }
