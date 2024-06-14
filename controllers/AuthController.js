@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 
 const Auth = {
     signup: async (req, res) => {
+        console.log(req.body);
         try {
             if (!req.body.email || !req.body.password) {
                 return res.status(400).send({ msg: 'Provide email and password properly' }); // 400 Bad Request
