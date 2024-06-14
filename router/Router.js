@@ -11,6 +11,7 @@ router.post(endPoints.signUp, Auth.signup)
 router.post(endPoints.verifyOTP, Auth.verifyOTP)
 router.post(endPoints.regenerateOTP, Auth.regenerateOtp)
 
+
 // Other routers here
 
 

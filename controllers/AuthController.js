@@ -83,8 +83,8 @@ const Auth = {
                 res.send({msg:'wrong email and password'})
             }
             const {email_address,id}=user_doc
-            const token=jwt.sign({email_address,id},process.env.JWT_SECRET)
-            return res.json({ user:{id,email_address},accesstoken:token })
+            const token=jwt.sign({email_address,id},process.env.JWT_SECRET,{expiresIn: '3600'})
+            return res.json({ user:{id,email_address},accesstoken:token,expiresIn:3600 })
         }catch (e) {
             console.log(e)
             return res.send({msg:"An error occurred.Try again "})
