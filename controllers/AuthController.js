@@ -7,6 +7,9 @@ const jwt = require('jsonwebtoken');
 const Auth = {
     signup: async (req, res) => {
         try {
+            if(!req.body.email || !req.body.password){
+                return res.send({msg:'Provide email and password properly'})
+            }
             const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false, digits: true });
             const { email, password } = req.body
             // Check if user already exists with email or not
@@ -26,7 +29,8 @@ const Auth = {
             console.log("Message sent: %s", info);
             return res.json({ msg: 'OTP has been sent to your email address' })
         } catch (error) {
-            return res.send({ msg: 'an error occured' })
+            console.log(error)
+            return res.send({ msg: 'An error occured' })
         }
     },
     verifyOTP: async (req, res) => {
